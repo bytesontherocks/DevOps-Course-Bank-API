@@ -3,13 +3,18 @@ from typing import Set, List
 
 class Account:
     name: str
+    balance: int
 
     def __init__(self, name: str):
         self.name = name
+        self.balance = 0
+
+    def update_balance(self, transaction: int):
+        self.balance += transaction
 
     def to_dict(self) -> dict: 
         return {
-            "name": self.name
+            "name": self.name,
         }
 
 class Transaction:
@@ -21,6 +26,7 @@ class Transaction:
         self.account = account
         self.date = date
         self.amount = amount
+        account.update_balance(amount)
 
 class Bank:
     def __init__(self):
@@ -32,6 +38,10 @@ class Bank:
         if not name:
             raise ValueError("Account name cannot be None or empty")
 
+        for account in self.accounts:
+            if account.name == name:
+                  raise ValueError("Account already exists")
+            
         account = Account(name)
         self.accounts.add(account)
         return account
@@ -48,3 +58,4 @@ class Bank:
         account = self.get_account(name)
         now = datetime.now()
         self.transactions.append(Transaction(account, now, amount))
+         
